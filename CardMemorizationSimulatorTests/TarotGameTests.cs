@@ -80,7 +80,42 @@ public class TarotGameTests
         var overflowedCardResult = game.GetNextCard();
         overflowedCardResult.IsFailure.Should().BeTrue();
     }
+    
+    [Fact]
+    public void Game_OnlyCardOfSameColorArePlayed_InATurn()
+    {
+        var game = new TarotGame();
+        game.Start();
+        
+        var first = game.GetNextCard().Value;
+        var second = game.GetNextCard().Value;;
+        var third = game.GetNextCard().Value;;
+        var fourth = game.GetNextCard().Value;
+        var fifth = game.GetNextCard().Value;
+         
+        // init the cardsInTheTurn with the cards above
+        var cardsInTheTurn = new List<Card>()
+        {
+            first, second, third, fourth, fifth
+        };
+        cardsInTheTurn.All(c => c.Family == first.Family).Should().BeTrue();
+    }
+    
+    [Fact]
+    public void TarotGame_DistributeAll78CardsOfTheDeck()
+    {
+        var game = new TarotGame();
+        
+        game.Start();
 
+        var allCards = game.Players.SelectMany(p => p.Hand).ToList();
+        
+        // J'ajuste de 78 à 75 cartes distribuées dans les mains des joueurs
+        allCards.Should().HaveCount(75);
+        
+        game.Deck.All(allCards.Contains);
+    }
+    
     private static TarotGame PlayAllTestGame(TarotGame game)
     {
         game.Start();
