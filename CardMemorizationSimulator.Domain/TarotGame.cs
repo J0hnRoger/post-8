@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using CSharpFunctionalExtensions;
 
 namespace CardMemorizationSimulator.Domain;
 
@@ -7,6 +8,9 @@ public class TarotGame
     public List<Player> Players { get; private set; }
     public int NbTurn { get; set; } = 0;
     public Queue<Player> CurrentTurn { get; internal set; } = new();
+    
+    public bool IsFinished => NbTurn == 18;
+    public bool PlayersHaveNoCardsLeft => Players.All(p => !p.HasCardsLeft);
 
     public void Start()
     {
@@ -36,7 +40,7 @@ public class TarotGame
     /// <summary>
     /// Get the next card played - in function of the turn players
     /// </summary>
-    public void GetNextCard()
+    public Result GetNextCard()
     {
         if (CurrentTurn.Count == 0)
         {
@@ -44,17 +48,19 @@ public class TarotGame
             CurrentTurn = new Queue<Player>(Players);
         }
 
-        if (Players.All(p => !p.Hand.Any()))
-            throw new Exception("current game is finished.");
+        if (PlayersHaveNoCardsLeft)
+            return Result.Failure("current game is finished.");
         
         // each player should put down a card in the order of the Players list
         var currentPlayer = CurrentTurn.Dequeue();
         currentPlayer.Play();
+        return Result.Success();
     }
 }
 
 public class Player
 {
+    public bool HasCardsLeft => Hand.Any();
     public List<Card> Hand { get; set; } = new();
 
     public Card Play()

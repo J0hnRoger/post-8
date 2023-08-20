@@ -67,28 +67,31 @@ public class TarotGameTests
         var game = new TarotGame();
         game.Start();
         
-        game.NbTurn.Should().Be(0);
-        while(game.Players.Any(p => p.Hand.Count > 0))
-        {
-            game.GetNextCard();
-        }
+        game = PlayAllTestGame(game);
         game.NbTurn.Should().Be(15);
     }
     
     [Fact]
-    public void Game_WhenGameIsFinished_ThrowException()
+    public void Game_WhenGameIsFinished_ReturnFailure()
     {
         var game = new TarotGame();
+        game = PlayAllTestGame(game);
+
+        var overflowedCardResult = game.GetNextCard();
+        overflowedCardResult.IsFailure.Should().BeTrue();
+    }
+
+    private static TarotGame PlayAllTestGame(TarotGame game)
+    {
         game.Start();
-        
+
         game.NbTurn.Should().Be(0);
-        while(game.Players.Any(p => p.Hand.Count > 0))
+        while (!game.PlayersHaveNoCardsLeft)
         {
-            game.GetNextCard();
+            var pickedCardResult = game.GetNextCard();
+            pickedCardResult.IsSuccess.Should().BeTrue();
         }
 
-        var action = () => game.GetNextCard();
-        action.Should()
-            .Throw<Exception>().WithMessage("current game is finished."); 
+        return game;
     }
 }
