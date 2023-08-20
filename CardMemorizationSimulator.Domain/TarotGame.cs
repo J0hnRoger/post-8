@@ -10,7 +10,6 @@ public class TarotGame
     
     public IReadOnlyList<Card> Dog { get; private set; }
     
-    public bool IsFinished => NbTurn == 18;
     public bool PlayersHaveNoCardsLeft => Players.All(p => !p.HasCardsLeft);
     
     /// <summary>
@@ -70,9 +69,56 @@ public class TarotGame
         
         // each player should put down a card in the order of the Players list
         var currentPlayer = CurrentTurn.Dequeue();
-        var playedCard = currentPlayer.Play();
+        var playedCard = currentPlayer.OpenTurn();
         return Result.Success(playedCard);
     }
+
+    public Result<CardTurn> PlayTurn()
+    {
+        if (CurrentTurn.Count == 0)
+        {
+            NbTurn++;
+            CurrentTurn = new Queue<Player>(Players);
+        }
+        
+        if (PlayersHaveNoCardsLeft)
+            return Result.Failure<CardTurn>("current game is finished.");
+
+        Card? askedCard = null;
+        CardTurn currentTurn = new CardTurn();
+        while (CurrentTurn.Count > 0)
+        {
+            var currentPlayer = CurrentTurn.Dequeue();
+            Card currentCard;
+            if (askedCard == null)
+            {
+                askedCard = currentPlayer.OpenTurn();
+                currentCard = askedCard;
+            }
+            else
+                currentCard = currentPlayer.Play(askedCard);
+            
+            currentTurn.PlayedCards.Push(new CardPlayed()
+            {
+                Card = currentCard,
+                Player = currentPlayer
+            });
+        }
+        return Result.Success(currentTurn);
+    }
+}
+
+public class CardTurn
+{
+    public Stack<CardPlayed> PlayedCards { get; set; }  = new Stack<CardPlayed>();
+    public Player Winner { get; set; } 
+    public int NbTurn;
+}
+
+public class CardPlayed
+{
+    public Card Card { get; set; } 
+    public Player Player { get; set; } 
 }
 
 public class Player
@@ -80,7 +126,7 @@ public class Player
     public bool HasCardsLeft => Hand.Any();
     public List<Card> Hand { get; set; } = new();
 
-    public Card Play()
+    public Card OpenTurn()
     {
         var playedCard = Hand.FirstOrDefault();
         if (playedCard == null)
@@ -90,16 +136,16 @@ public class Player
         
         return playedCard;
     }
-}
 
-public class Card
-{
-    public CardFamily Family { get; private set; }
-    public CardValue Value { get; private set; }
-    
-    public Card(CardFamily family, CardValue value)
+    public Card Play(Card askedCard)
     {
-        Family = family;
-        Value = value;
+        // TODO - Get card with same family as askedCard 
+        var playedCard = Hand.FirstOrDefault();
+        if (playedCard == null)
+            throw new Exception("No more card to play");
+        
+        Hand.Remove(playedCard); 
+        
+        return playedCard;
     }
 }

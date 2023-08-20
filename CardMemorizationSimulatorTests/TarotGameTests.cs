@@ -14,7 +14,7 @@ public class TarotGameTests
     }
     
     [Fact]
-    public void Game_Start_EachPlayer_Has18Cards()
+    public void Game_Start_EachPlayer_Has15Cards()
     {
         var game = new TarotGame();
         game.Start();
@@ -22,6 +22,12 @@ public class TarotGameTests
         game.Players.Should().HaveCount(5);
         game.Players.ForEach(p 
             => p.Hand.Should().HaveCount(15));
+        
+        var cardsInHands = game.Players.SelectMany(p => p.Hand).ToList();
+        var allCards = cardsInHands.Concat(game.Dog).ToList();
+        allCards.Should().HaveCount(78);
+        allCards.Count.Should().Be(allCards.Distinct().Count());
+        Deck.CreateTarotDeck().Should().Contain(allCards); 
     }
     
     [Fact]
@@ -99,6 +105,49 @@ public class TarotGameTests
             first, second, third, fourth, fifth
         };
         cardsInTheTurn.All(c => c.Family == first.Family).Should().BeTrue();
+    }
+    
+    [Fact]
+    public void Game_PlayTurn_ReturnThe5PlayedCards()
+    {
+        var game = new TarotGame();
+        game.Start();
+        
+        var firstTurnResult = game.PlayTurn(); 
+        firstTurnResult.IsSuccess.Should().BeTrue();
+        var cardTurn = firstTurnResult.Value; 
+        cardTurn.PlayedCards.Should().HaveCount(5);
+    }
+    
+    [Fact]
+    public void Game_PlayTurn_ReturnTheWinnerOfTheTurn()
+    {
+        var game = new TarotGame();
+        game.Start();
+        
+        var firstTurnResult = game.PlayTurn(); 
+        firstTurnResult.IsSuccess.Should().BeTrue();
+        var cardTurn = firstTurnResult.Value; 
+        var winner = cardTurn.Winner;
+        winner.Should().NotBeNull();
+    }
+    
+    [Fact]
+    public void Game_StarterPlayer_IsTheWinner_OfThePreviousTurn()
+    {
+        var game = new TarotGame();
+        game.Start();
+        
+        var firstTurnResult = game.PlayTurn(); 
+        firstTurnResult.IsSuccess.Should().BeTrue();
+        var cardTurn = firstTurnResult.Value; 
+        cardTurn.PlayedCards.Should().HaveCount(5);
+
+        var winner = cardTurn.Winner;
+        var secondTurnResult = game.PlayTurn();
+        secondTurnResult.IsSuccess.Should().BeTrue();
+        secondTurnResult.Value.PlayedCards.First()
+            .Player.Should().Be(winner);
     }
     
     [Fact]
