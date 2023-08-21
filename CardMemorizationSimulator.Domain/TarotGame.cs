@@ -6,12 +6,17 @@ namespace CardMemorizationSimulator.Domain;
 public class TarotGame
 {
     public List<Player> Players { get; private set; }
-    public int NbTurn { get; set; } = 0;
+    public int NbTurns => _turnsHistory.Count;
     public Queue<Player> CurrentTurn { get; internal set; } = new();
     
     public IReadOnlyList<Card> Dog { get; private set; }
     
     public bool PlayersHaveNoCardsLeft => Players.All(p => !p.HasCardsLeft);
+
+    private List<CardTurn> _turnsHistory = new();
+    public IReadOnlyList<CardTurn> TurnsHistory => _turnsHistory; 
+    
+    private CardTurn _lastCardTurn => _turnsHistory.Last(); 
     
     /// <summary>
     /// All cards in the game
@@ -26,14 +31,9 @@ public class TarotGame
     
     public void Start()
     {
-        Players = new List<Player>()
-        {
-            new Player(),
-            new Player(),
-            new Player(),
-            new Player(),
-            new Player(),
-        };
+        Players = new List<Player>();
+        for (var i = 0; i < 5; i++)
+            Players.Add(new Player($"Player {i + 1}"));    
 
         DistributeCards();
     }
@@ -55,32 +55,21 @@ public class TarotGame
         }
     }
 
-    /// <summary>
-    /// Get the next card played - in function of the turn players
-    /// </summary>
-    public Result<Card> GetNextCard()
-    {
-        if (CurrentTurn.Count == 0)
-        {
-            NbTurn++;
-            CurrentTurn = new Queue<Player>(Players);
-        }
-
-        if (PlayersHaveNoCardsLeft)
-            return Result.Failure<Card>("current game is finished.");
-        
-        // each player should put down a card in the order of the Players list
-        var currentPlayer = CurrentTurn.Dequeue();
-        var playedCard = currentPlayer.OpenTurn();
-        return Result.Success(playedCard);
-    }
-
     public Result<CardTurn> PlayTurn()
     {
         if (CurrentTurn.Count == 0)
         {
-            NbTurn++;
             CurrentTurn = new Queue<Player>(Players);
+        }
+        else
+        {
+            // Re-order the Queue<Player> with the winner of the last turn in _lastCardTurn first, in the same order than before 
+            var winner = _lastCardTurn.GetWinner().Value;
+            var winnerIndex = Players.FindIndex(p => p == winner);
+            
+            var orderedPlayers = Players.Skip(winnerIndex).Concat(Players.Take(winnerIndex));
+            
+            CurrentTurn = new Queue<Player>(orderedPlayers);
         }
         
         if (PlayersHaveNoCardsLeft)
@@ -107,6 +96,8 @@ public class TarotGame
             });
         }
 
+        _turnsHistory.Add(currentTurn);
+        currentTurn.NbTurn = NbTurns;
         return Result.Success(currentTurn);
     }
 }
@@ -120,45 +111,21 @@ public class CardTurn
     public Result<Player> GetWinner()
     {
         if (!PlayedCards.Any())
-            Result.Failure("Aucune carte jouée ce tour: {NbTurn}");
+            Result.Failure($"Aucune carte jouée ce tour: {NbTurn}");
             
-        var winner = PlayedCards.ToList().OrderByDescending(p => p.Card.Value).First().Player;
+        var winner = PlayedCards.ToList()
+            .OrderByDescending(p => p.Card.Value).First().Player;
+        
         return winner;
     }
-    
 }
 
 public class CardPlayed
 {
     public Card Card { get; set; } 
-    public Player Player { get; set; } 
-}
-
-public class Player
-{
-    public bool HasCardsLeft => Hand.Any();
-    public List<Card> Hand { get; set; } = new();
-
-    public Card OpenTurn()
+    public Player Player { get; set; }
+    public override string ToString()
     {
-        var playedCard = Hand.FirstOrDefault();
-        if (playedCard == null)
-            throw new Exception("No more card to play");
-        
-        Hand.Remove(playedCard); 
-        
-        return playedCard;
-    }
-
-    public Card Play(Card askedCard)
-    {
-        // TODO - Get card with same family as askedCard 
-        var playedCard = Hand.FirstOrDefault();
-        if (playedCard == null)
-            throw new Exception("No more card to play");
-        
-        Hand.Remove(playedCard); 
-        
-        return playedCard;
+        return $"{Card} played by {Player}";
     }
 }
