@@ -4,7 +4,14 @@ namespace CardMemorizationSimulatorTests;
 
 public class Deck
 {
-    public static List<Card> CreateTarotDeck()
+    protected internal Deck(List<Card> tarotDeck)
+    {
+        Cards = tarotDeck;
+    }
+
+    public List<Card> Cards { get; protected set; }
+   
+    public static Deck CreateTarotDeck()
     {
         // Instancier 78 cartes
         List<Card> tarotDeck = new();
@@ -19,6 +26,12 @@ public class Deck
         foreach (CardValue atout in CardValue.Atouts)
            tarotDeck.Add(new Card(CardFamily.Atout, atout));
 
-        return tarotDeck;
+        return new Deck(tarotDeck);
+    }
+
+    public virtual void Shuffle()
+    {
+       // change randomly the order of the Cards property  
+       Cards = Cards.OrderBy(c => Guid.NewGuid()).ToList();
     }
 }

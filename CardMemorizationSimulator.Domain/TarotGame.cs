@@ -1,4 +1,5 @@
-﻿using CSharpFunctionalExtensions;
+﻿using CardMemorizationSimulatorTests;
+using CSharpFunctionalExtensions;
 
 namespace CardMemorizationSimulator.Domain;
 
@@ -17,9 +18,10 @@ public class TarotGame
     /// </summary>
     public IReadOnlyList<Card> Deck { get; }
 
-    public TarotGame()
+    public TarotGame(Deck deck)
     {
-        Deck = CardMemorizationSimulatorTests.Deck.CreateTarotDeck();
+        deck.Shuffle();
+        Deck = deck.Cards;
     }
     
     public void Start()
@@ -104,6 +106,7 @@ public class TarotGame
                 Player = currentPlayer
             });
         }
+
         return Result.Success(currentTurn);
     }
 }
@@ -111,8 +114,18 @@ public class TarotGame
 public class CardTurn
 {
     public Stack<CardPlayed> PlayedCards { get; set; }  = new Stack<CardPlayed>();
-    public Player Winner { get; set; } 
+
     public int NbTurn;
+    
+    public Result<Player> GetWinner()
+    {
+        if (!PlayedCards.Any())
+            Result.Failure("Aucune carte jouée ce tour: {NbTurn}");
+            
+        var winner = PlayedCards.ToList().OrderByDescending(p => p.Card.Value).First().Player;
+        return winner;
+    }
+    
 }
 
 public class CardPlayed

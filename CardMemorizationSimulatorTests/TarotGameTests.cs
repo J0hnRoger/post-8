@@ -4,10 +4,19 @@ namespace CardMemorizationSimulatorTests;
 
 public class TarotGameTests
 {
+
+    [Fact]
+    public void Game_CreatedWith_Deck()
+    {
+        TarotGame game = CreateTarotGame();
+         
+        game.Deck.Count.Should().Be(78);
+    }
+
     [Fact]
     public void Game_StartANewGame_Setup5Players()
     {
-        var game = new TarotGame();
+        TarotGame game = CreateTarotGame();
         game.Start();
 
         game.Players.Should().HaveCount(5);
@@ -16,7 +25,7 @@ public class TarotGameTests
     [Fact]
     public void Game_Start_EachPlayer_Has15Cards()
     {
-        var game = new TarotGame();
+        TarotGame game = CreateTarotGame();
         game.Start();
 
         game.Players.Should().HaveCount(5);
@@ -27,13 +36,13 @@ public class TarotGameTests
         var allCards = cardsInHands.Concat(game.Dog).ToList();
         allCards.Should().HaveCount(78);
         allCards.Count.Should().Be(allCards.Distinct().Count());
-        Deck.CreateTarotDeck().Should().Contain(allCards); 
+        Deck.CreateTarotDeck().Cards.Should().Contain(allCards); 
     }
     
     [Fact]
     public void Game_Start_AtTurn1()
     {
-        var game = new TarotGame();
+        TarotGame game = CreateTarotGame();
         game.Start();
         
         game.NbTurn.Should().Be(0);
@@ -42,7 +51,7 @@ public class TarotGameTests
     [Fact]
     public void Game_Start_LaunchANewTurn()
     {
-        var game = new TarotGame();
+        TarotGame game = CreateTarotGame();
         game.Start();
         
         // Le 1er joueur a ouvert en  posant une carte - il reste 4 joueurs à jouer dans ce tour
@@ -54,7 +63,7 @@ public class TarotGameTests
     [Fact]
     public void Game_Start_FirstPlayer_PutDownACard()
     {
-        var game = new TarotGame();
+        TarotGame game = CreateTarotGame();
         game.Start();
         
         game.NbTurn.Should().Be(0);
@@ -70,7 +79,7 @@ public class TarotGameTests
     [Fact]
     public void Game_WhenPlayersHaveNoMoreCardsInHands_NbTurnIs14()
     {
-        var game = new TarotGame();
+        TarotGame game = CreateTarotGame();
         game.Start();
         
         game = PlayAllTestGame(game);
@@ -80,7 +89,7 @@ public class TarotGameTests
     [Fact]
     public void Game_WhenGameIsFinished_ReturnFailure()
     {
-        var game = new TarotGame();
+        TarotGame game = CreateTarotGame();
         game = PlayAllTestGame(game);
 
         var overflowedCardResult = game.GetNextCard();
@@ -90,7 +99,7 @@ public class TarotGameTests
     [Fact]
     public void Game_OnlyCardOfSameColorArePlayed_InATurn()
     {
-        var game = new TarotGame();
+        TarotGame game = CreateTarotGame();
         game.Start();
         
         var first = game.GetNextCard().Value;
@@ -110,7 +119,7 @@ public class TarotGameTests
     [Fact]
     public void Game_PlayTurn_ReturnThe5PlayedCards()
     {
-        var game = new TarotGame();
+        TarotGame game = CreateTarotGame();
         game.Start();
         
         var firstTurnResult = game.PlayTurn(); 
@@ -122,20 +131,20 @@ public class TarotGameTests
     [Fact]
     public void Game_PlayTurn_ReturnTheWinnerOfTheTurn()
     {
-        var game = new TarotGame();
+        TarotGame game = CreateTarotGame();
         game.Start();
         
         var firstTurnResult = game.PlayTurn(); 
         firstTurnResult.IsSuccess.Should().BeTrue();
         var cardTurn = firstTurnResult.Value; 
-        var winner = cardTurn.Winner;
+        var winner = cardTurn.GetWinner();
         winner.Should().NotBeNull();
     }
     
     [Fact]
     public void Game_StarterPlayer_IsTheWinner_OfThePreviousTurn()
     {
-        var game = new TarotGame();
+        TarotGame game = CreateTarotGame();
         game.Start();
         
         var firstTurnResult = game.PlayTurn(); 
@@ -143,7 +152,8 @@ public class TarotGameTests
         var cardTurn = firstTurnResult.Value; 
         cardTurn.PlayedCards.Should().HaveCount(5);
 
-        var winner = cardTurn.Winner;
+        var winner = cardTurn.GetWinner();
+;
         var secondTurnResult = game.PlayTurn();
         secondTurnResult.IsSuccess.Should().BeTrue();
         secondTurnResult.Value.PlayedCards.First()
@@ -153,7 +163,7 @@ public class TarotGameTests
     [Fact]
     public void TarotGame_DistributeAll78CardsOfTheDeck()
     {
-        var game = new TarotGame();
+        TarotGame game = CreateTarotGame();
         
         game.Start();
 
@@ -163,6 +173,14 @@ public class TarotGameTests
         allCards.Should().HaveCount(75);
         
         game.Deck.All(allCards.Contains);
+    }
+    
+    #region Utilities
+    private static TarotGame CreateTarotGame()
+    {
+        TestDeck testDeck = TestDeck.CreateTarotDeck();
+        TarotGame game = new TarotGame(testDeck);
+        return game;
     }
     
     private static TarotGame PlayAllTestGame(TarotGame game)
@@ -178,4 +196,5 @@ public class TarotGameTests
 
         return game;
     }
+    #endregion
 }
