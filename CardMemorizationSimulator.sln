@@ -1,8 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardMemorizationSimulatorTests", "CardMemorizationSimulatorTests\CardMemorizationSimulatorTests.csproj", "{A06A5038-2805-48AC-9202-BA7D3B056FDC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardMemorizationSimulator.Tests", "CardMemorizationSimulator.Tests\CardMemorizationSimulator.Tests.csproj", "{A06A5038-2805-48AC-9202-BA7D3B056FDC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardMemorizationSimulator.Domain", "CardMemorizationSimulator.Domain\CardMemorizationSimulator.Domain.csproj", "{CF27D7B4-6A78-4929-98C8-DEB10B5828C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardMemorizationSimulator.Console", "CardMemorizationSimulator.Console\CardMemorizationSimulator.Console.csproj", "{7D1874B6-DCBC-437D-9E59-8B3CBE05A4EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +20,9 @@ Global
 		{CF27D7B4-6A78-4929-98C8-DEB10B5828C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF27D7B4-6A78-4929-98C8-DEB10B5828C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF27D7B4-6A78-4929-98C8-DEB10B5828C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D1874B6-DCBC-437D-9E59-8B3CBE05A4EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D1874B6-DCBC-437D-9E59-8B3CBE05A4EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D1874B6-DCBC-437D-9E59-8B3CBE05A4EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D1874B6-DCBC-437D-9E59-8B3CBE05A4EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

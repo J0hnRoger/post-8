@@ -8,7 +8,7 @@ public class CardFamily : ValueObject
     public static CardFamily Diamond = new( "Diamond", 14);
     public static CardFamily Club = new( "Club", 14);
     public static CardFamily Spade = new( "Spade", 14);
-    public static CardFamily Atout = new( "Atout", 21);
+    public static CardFamily Atout = new( "Atout", 22);
    
     public static List<CardFamily> AllCardFamily 
         => new () { Heart, Diamond, Club, Spade };
