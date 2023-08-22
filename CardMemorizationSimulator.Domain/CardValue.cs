@@ -5,16 +5,16 @@ namespace CardMemorizationSimulator.Domain;
 public class CardValue : ValueObject
 {
     #region Card Values
-    public static CardValue One = new CardValue(1, "Un");
-    public static CardValue Two = new CardValue(2, "Deux");
-    public static CardValue Three = new CardValue(3, "Three");
-    public static CardValue Four = new CardValue(4, "Four");
-    public static CardValue Five = new CardValue(5, "Five");
-    public static CardValue Six = new CardValue(6, "Six");
-    public static CardValue Seven = new CardValue(7, "Seven");
-    public static CardValue Eight = new CardValue(8, "Eight");
-    public static CardValue Nine = new CardValue(9, "Nine");
-    public static CardValue Ten = new CardValue(10, "Ten");
+    public static CardValue One = new CardValue(1, "1");
+    public static CardValue Two = new CardValue(2, "2");
+    public static CardValue Three = new CardValue(3, "3");
+    public static CardValue Four = new CardValue(4, "4");
+    public static CardValue Five = new CardValue(5, "5");
+    public static CardValue Six = new CardValue(6, "6");
+    public static CardValue Seven = new CardValue(7, "7");
+    public static CardValue Eight = new CardValue(8, "8");
+    public static CardValue Nine = new CardValue(9, "9");
+    public static CardValue Ten = new CardValue(10, "10");
     public static CardValue Jack = new CardValue(11, "Valet");
     public static CardValue Knight = new CardValue(12, "Cavalier");
     public static CardValue Queen = new CardValue(13, "Dame");

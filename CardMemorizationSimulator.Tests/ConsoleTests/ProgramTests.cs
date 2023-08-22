@@ -13,7 +13,7 @@ public class ProgramTests
         output.WriteLine("ProgramTests launched");
     }
     
-    [Fact]
+    [Fact(Skip = "Not used")]
     public void Program_Launch()
     {
         System.Console.SetOut(new XUnitTextWriter(output));

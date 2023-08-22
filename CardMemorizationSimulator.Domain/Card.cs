@@ -15,7 +15,7 @@ public class Card : ValueObject
     
     public override string ToString()
     {
-        return $"{Value.Name} of {Family.Name}";
+        return $"{Value.Name} de {Family.DisplayName}";
     }
 
     protected override IEnumerable<IComparable> GetEqualityComponents()

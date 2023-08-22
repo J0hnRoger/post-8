@@ -17,7 +17,7 @@ public class CardTests
     {
         var card = new Card(CardFamily.Atout, CardValue.TwentyOne);
         
-        card.ToString().Should().Be("21 of Atout");
+        card.ToString().Should().Be("21 de Atout");
     }
     
     [Fact]
