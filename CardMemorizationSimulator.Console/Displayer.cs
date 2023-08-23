@@ -38,35 +38,35 @@ class Displayer
         
         tableTop["TopRow2"].Update(
             Align.Center(
-                DisplayCard(turn.PlayedCards.Pop().Card),
+                DisplayCard(turn.PlayedCards[0].Card),
                 VerticalAlignment.Top
             )
         );
 
         tableTop["TopRow3"].Update(
             Align.Center(
-                DisplayCard(turn.PlayedCards.Pop().Card),
+                DisplayCard(turn.PlayedCards[1].Card),
                 VerticalAlignment.Top
             )
         );
         
         tableTop["MiddleRow4"].Update(
             Align.Center(
-                DisplayCard(turn.PlayedCards.Pop().Card),
+                DisplayCard(turn.PlayedCards[2].Card),
                 VerticalAlignment.Middle
             )
         );
         
         tableTop["BottomRow3"].Update(
             Align.Left(
-                DisplayCard(turn.PlayedCards.Pop().Card),
+                DisplayCard(turn.PlayedCards[3].Card),
                 VerticalAlignment.Middle
             )
         );
         
         tableTop["MiddleRow"].Update(
             Align.Center(
-                DisplayCard(turn.PlayedCards.Pop().Card),
+                DisplayCard(turn.PlayedCards[4].Card),
                 VerticalAlignment.Middle
             )
         );

@@ -1,4 +1,5 @@
-﻿using CardMemorizationSimulatorTests;
+﻿using System.Collections.ObjectModel;
+using CardMemorizationSimulatorTests;
 using CSharpFunctionalExtensions;
 
 namespace CardMemorizationSimulator.Domain;
@@ -14,7 +15,7 @@ public class TarotGame
     public bool PlayersHaveNoCardsLeft => Players.All(p => !p.HasCardsLeft);
 
     private List<CardTurn> _turnsHistory = new();
-    public IReadOnlyList<CardTurn> TurnsHistory => _turnsHistory; 
+    public List<CardTurn> TurnsHistory => _turnsHistory; 
     
     private CardTurn _lastCardTurn => _turnsHistory.Last(); 
     
@@ -89,7 +90,7 @@ public class TarotGame
             else
                 currentCard = currentPlayer.Play(askedCard);
             
-            currentTurn.PlayedCards.Push(new CardPlayed()
+            currentTurn.PlayedCards.Add(new CardPlayed()
             {
                 Card = currentCard,
                 Player = currentPlayer
@@ -104,7 +105,7 @@ public class TarotGame
 
 public class CardTurn
 {
-    public Stack<CardPlayed> PlayedCards { get; set; }  = new Stack<CardPlayed>();
+    public List<CardPlayed> PlayedCards { get; set; }  = new List<CardPlayed>();
 
     public int NbTurn;
     
